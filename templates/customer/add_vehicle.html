@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card add-vehicle-container">
+    <h2 class="text-center"><i class="fa-solid fa-car"></i> Add New Vehicle</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+            <label>{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <div class="error-message">{{ field.errors }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <div class="action-row">
+            <a href="{% url 'customer_dashboard' %}" class="btn btn-secondary flex-1 text-center">Cancel</a>
+            <button type="submit" class="btn flex-1">Add Vehicle <i class="fa-solid fa-plus"></i></button>
+        </div>
+    </form>
+</div>
+{% endblock %}

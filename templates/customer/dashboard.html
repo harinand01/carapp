@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- Hero Section with Automotive Theme -->
+<div class="hero-card">
+    <div class="hero-content">
+        <div class="hero-subtitle-wrapper">
+            <i class="fa-solid fa-wrench hero-icon"></i>
+            <span class="hero-subtitle">Premium Car Care</span>
+        </div>
+        <h1 class="hero-title">
+            Welcome, {{ user.first_name }}
+        </h1>
+        <p class="hero-description">
+            Your vehicle deserves the best. Manage your fleet and schedule premium maintenance services with ease.
+        </p>
+    </div>
+    <div class="hero-action">
+        <a href="{% url 'book_service' %}" class="btn btn-hero">
+            <i class="fa-solid fa-calendar-plus"></i> &nbsp; Book Service
+        </a>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+
+    <!-- Vehicles Section -->
+    <div class="card" style="height: fit-content;">
+        <div class="card-header">
+            <h2 class="section-header">
+                <i class="fa-solid fa-warehouse div-icon"></i> My Garage
+            </h2>
+            <a href="{% url 'add_vehicle' %}" class="btn btn-secondary btn-icon-circle">
+                <i class="fa-solid fa-plus"></i>
+            </a>
+        </div>
+
+        {% if vehicles %}
+        <div class="vehicle-grid">
+            {% for vehicle in vehicles %}
+            <div class="vehicle-card">
+                <div class="vehicle-content">
+                    <div class="vehicle-icon-box">
+                        <i class="fa-solid fa-car vehicle-icon"></i>
+                    </div>
+                    <div class="vehicle-info">
+                        <div class="vehicle-name">{{ vehicle.make }} {{ vehicle.model }}</div>
+                        <div class="vehicle-plate">
+                            {{ vehicle.license_plate }}
+                        </div>
+                    </div>
+                </div>
+                <div
+                    style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.5rem; text-align: right;">
+                    <a href="{% url 'delete_vehicle' vehicle.id %}" class="btn-text-danger"
+                        onclick="return confirm('Are you sure you want to remove this vehicle?');"
+                        style="color: var(--danger); text-decoration: none; font-size: 0.9rem;">
+                        <i class="fa-solid fa-trash"></i> Remove
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fa-solid fa-car-side empty-icon"></i>
+            <p class="empty-text">No vehicles in your garage.</p>
+            <a href="{% url 'add_vehicle' %}" class="link-primary">Add your first car</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Bookings Section -->
+    <div class="card">
+        <h2 class="section-header" style="margin-bottom: 1.5rem;">
+            <i class="fa-solid fa-clock-rotate-left" style="color: var(--success);"></i> Activity Log
+        </h2>
+
+        {% if bookings %}
+        <div class="table-responsive">
+            <table>
+                <thead class="table-header">
+                    <tr>
+                        <th>Service Detail</th>
+                        <th>Schedule</th>
+                        <th>Vehicle</th>
+                        <th>Technician</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr>
+                        <td>
+                            <div style="font-weight: 700; color: white; font-size: 1.05rem;">{{ booking.service.name }}
+                            </div>
+                            <div style="font-size: 0.8rem; opacity: 0.5;">ID: #{{ booking.id }}</div>
+                        </td>
+                        <td>
+                            <div style="font-weight: 500;">{{ booking.booking_date }}</div>
+                            <div style="font-size: 0.85rem; color: var(--text-muted);">{{ booking.time_slot }}</div>
+                        </td>
+                        <td>
+                            <div style="font-weight: 500;">{{ booking.vehicle.make }}</div>
+                            <div style="font-size: 0.85rem; opacity: 0.7;">{{ booking.vehicle.model }}</div>
+                        </td>
+                        <td>
+                            {% if booking.mechanic %}
+                            <div class="mechanic-info">
+                                <div class="mechanic-avatar">
+                                    {{ booking.mechanic.user.first_name|first }}
+                                </div>
+                                {{ booking.mechanic.user.first_name }}
+                            </div>
+                            {% else %}
+                            <span class="status-pending">Pending Assignment</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span
+                                class="badge {% if booking.status == 'COMPLETED' or booking.status == 'DELIVERED' %}bg-completed{% elif booking.status == 'PENDING' %}bg-pending{% else %}bg-info{% endif %}">
+                                {{ booking.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if not booking.payment.is_successful %}
+                            <a href="{% url 'payment_status' booking.id %}" class="btn btn-secondary btn-pay">
+                                Pay Now
+                            </a>
+                            {% if booking.status == 'PENDING' %}
+                            <a href="{% url 'cancel_booking' booking.id %}" class="btn-text-danger"
+                                onclick="return confirm('Are you sure you want to cancel this booking?');"
+                                style="color: var(--danger); margin-left: 0.5rem; text-decoration: none; font-size: 0.85rem;">
+                                <i class="fa-solid fa-ban"></i> Cancel
+                            </a>
+                            {% endif %}
+                            {% else %}
+                            <div class="action-buttons">
+                                <span class="badge bg-completed badge-paid"><i class="fa-solid fa-check"></i>
+                                    Paid</span>
+                                {% if booking.status == 'COMPLETED' or booking.status == 'DELIVERED' %}
+                                <a href="{% url 'give_feedback' booking.id %}" class="badge bg-info btn-rate">
+                                    <i class="fa-regular fa-star"></i> Rate
+                                </a>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state-large">
+            <img src="https://images.unsplash.com/photo-1599256821959-1f415392d4f2?auto=format&fit=crop&w=400&q=80"
+                class="empty-image" alt="No bookings">
+            <h3 class="empty-title">No Active Bookings</h3>
+            <p class="empty-text-mt">Ready to schedule your next maintenance?</p>
+            <a href="{% url 'service_list' %}" class="link-primary-block">Browse Services &rarr;</a>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card feedback-container">
+    <h2 class="text-center"><i class="fa-solid fa-star"></i> Rate Your Experience</h2>
+    <div class="feedback-header">
+        <p class="text-muted mb-1">How was your service for</p>
+        <div class="service-name-large">{{ booking.service.name }}</div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Rating</label>
+            {{ form.rating }}
+            <p class="rating-subtext">1 = Poor, 5 = Excellent</p>
+        </div>
+        <div class="form-group">
+            <label>Comments</label>
+            {{ form.comment }}
+        </div>
+        <button type="submit" class="btn w-100">Submit Feedback <i class="fa-solid fa-paper-plane"></i></button>
+    </form>
+</div>
+{% endblock %}

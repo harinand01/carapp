@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="card p-5">
+                <div class="card-body">
+                    <h2 class="card-title text-warning"><i class="fa-solid fa-triangle-exclamation"></i> Account Setup
+                        Required</h2>
+                    <p class="card-text mt-3">
+                        Your account has been created, but it has not been assigned a specific role (Customer or
+                        Mechanic).
+                    </p>
+                    <p class="text-muted">
+                        If you are a customer, please contact support. <br>
+                        If you are a mechanic, please ask your administrator to complete your profile setup.
+                    </p>
+                    <a href="{% url 'logout' %}" class="btn btn-primary mt-3">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

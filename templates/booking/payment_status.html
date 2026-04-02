@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card payment-container">
+    <h2><i class="fa-solid fa-file-invoice-dollar"></i> Payment Details</h2>
+    <div class="payment-details-box">
+        <p class="payment-row"><span>Booking ID:</span> <strong>#{{ booking.id }}</strong></p>
+        <p class="payment-row"><span>Service:</span> <strong>{{ booking.service.name }}</strong></p>
+        <p class="payment-row"><span>Customer:</span> <strong>{{ booking.customer.user.get_full_name }}</strong></p>
+        <hr class="payment-divider">
+        <p class="payment-total-row"><span>Total Amount:</span> <strong class="text-success">${{ booking.payment.amount
+                }}</strong></p>
+    </div>
+
+    {% if booking.payment.is_successful %}
+    <div class="alert success">
+        <i class="fa-solid fa-check-circle"></i> Payment Completed
+    </div>
+    <a href="{% url 'customer_dashboard' %}" class="btn">Back to Dashboard</a>
+    {% else %}
+    <div class="mb-2">
+        <p class="text-muted mb-1">Complete your payment to confirm the service.</p>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="text-left mb-1-5">
+            <div class="form-group">
+                <label>Card Number</label>
+                <input type="text" class="form-control" placeholder="0000 0000 0000 0000" maxlength="19" required>
+            </div>
+            <div class="card-input-grid">
+                <div class="form-group">
+                    <label>Expiry Date</label>
+                    <input type="text" class="form-control" placeholder="MM/YY" maxlength="5" required>
+                </div>
+                <div class="form-group">
+                    <label>CVC</label>
+                    <input type="password" class="form-control" placeholder="123" maxlength="3" required>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn w-100">Pay Now <i class="fa-solid fa-credit-card"></i></button>
+    </form>
+    <div class="mt-1">
+        <a href="{% url 'customer_dashboard' %}" class="text-muted-small" style="font-size: 0.9rem;">Pay Later</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

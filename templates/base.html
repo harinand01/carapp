@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoFix | Premium Car Service</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=1.0">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <a href="/" class="logo-link">
+                <i class="fa-solid fa-bolt"></i> AutoFix
+            </a>
+        </div>
+        <div class="hamburger-menu">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+        <div class="nav-links">
+            {% if user.is_authenticated %}
+            {% if user.customer %}
+            <a href="{% url 'customer_dashboard' %}"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+            <a href="{% url 'service_list' %}"><i class="fa-solid fa-list-check"></i> Services</a>
+            <a href="{% url 'customer_profile' %}"><i class="fa-solid fa-user"></i> Profile</a>
+            <a href="{% url 'book_service' %}"><i class="fa-solid fa-calendar-plus"></i> Book Now</a>
+            <a href="{% url 'vehicle_list' %}"><i class="fa-solid fa-car"></i> My Vehicles</a>
+            {% elif user.mechanic %}
+            <a href="{% url 'mechanic_dashboard' %}"><i class="fa-solid fa-screwdriver-wrench"></i> Workspace</a>
+            <a href="{% url 'mechanic_profile' %}"><i class="fa-solid fa-user-gear"></i> Profile</a>
+            {% endif %}
+            <form action="{% url 'logout' %}" method="post" class="form-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+            </form>
+            {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'register' %}">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer>
+        <p>&copy; 2026 AutoFix Car Services. All rights reserved.</p>
+    </footer>
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+
+</html>

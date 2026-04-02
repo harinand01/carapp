@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+    <h2>My Vehicles</h2>
+    {% if vehicles %}
+    <table>
+        <thead>
+            <tr>
+                <th>Make</th>
+                <th>Model</th>
+                <th>License Plate</th>
+                <th>Year</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vehicle in vehicles %}
+            <tr>
+                <td>{{ vehicle.make }}</td>
+                <td>{{ vehicle.model }}</td>
+                <td>{{ vehicle.license_plate }}</td>
+                <td>{{ vehicle.year }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No vehicles found.</p>
+    {% endif %}
+    <div class="mt-8">
+        <a href="{% url 'add_vehicle' %}" class="btn">Add Vehicle</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="mechanic-header">
+    <h1><i class="fa-solid fa-screwdriver-wrench"></i> Mechanic Workspace</h1>
+    <p class="text-muted">Manage your assigned service tasks.</p>
+</div>
+
+<div class="card">
+    <h2><i class="fa-solid fa-list-check"></i> Assigned Tasks</h2>
+    {% if bookings %}
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date/Time</th>
+                    <th>Vehicle Info</th>
+                    <th>Service</th>
+                    <th>Current Status</th>
+                    <th>Update Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>#{{ booking.id }}</td>
+                    <td>
+                        <div><i class="fa-regular fa-calendar"></i> {{ booking.booking_date }}</div>
+                        <div class="task-time-icon"><i class="fa-regular fa-clock"></i>
+                            {{ booking.time_slot }}</div>
+                    </td>
+                    <td>
+                        <div class="vehicle-info-compact">{{ booking.vehicle.make }} {{ booking.vehicle.model }}</div>
+                        <div class="text-muted-small">{{ booking.vehicle.license_plate }}
+                        </div>
+                    </td>
+                    <td>{{ booking.service.name }}</td>
+                    <td>
+                        <span
+                            class="badge {% if booking.status == 'PENDING' %}bg-warning{% elif booking.status == 'IN_PROGRESS' %}bg-info{% else %}bg-secondary{% endif %}">
+                            {{ booking.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <form action="{% url 'update_booking_status' booking.id %}" method="post"
+                            class="status-update-form">
+                            {% csrf_token %}
+                            <select name="status" class="form-control status-select">
+                              {% for code, label in status_choices %}
+                                <option value="{{ code }}"
+                                    {% if booking.status == code %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-small"><i class="fa-solid fa-check"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-tasks">
+        <i class="fa-solid fa-clipboard-check empty-task-icon"></i>
+        <p>No active tasks assigned. Good job!</p>
+    </div>
+    {% endif %}
+</div>
+
+<div class="card history-card">
+    <h2><i class="fa-solid fa-clock-rotate-left"></i> Completed History</h2>
+    {% if history %}
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Vehicle</th>
+                    <th>Service</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in history %}
+                <tr>
+                    <td>#{{ booking.id }}</td>
+                    <td>{{ booking.booking_date }}</td>
+                    <td>{{ booking.vehicle.make }} {{ booking.vehicle.model }}</td>
+                    <td>{{ booking.service.name }}</td>
+                    <td><span class="badge bg-success">{{ booking.get_status_display }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-muted p-1">No history yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

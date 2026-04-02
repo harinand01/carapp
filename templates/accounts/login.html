@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-split-layout">
+        <div class="auth-visual">
+            <div class="auth-visual-content">
+                <h2>Welcome Back!</h2>
+                <p>Access your dashboard to manage bookings, track vehicle status, and view service history.</p>
+            </div>
+        </div>
+        <div class="auth-form-side">
+            <h2 class="mb-2"><i class="fa-solid fa-lock" style="color: var(--primary);"></i> Login</h2>
+            <form method="post">
+                {% csrf_token %}
+                {% if form.errors %}
+                <div class="alert error">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                    {{ error }}<br>
+                    {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" name="username" class="form-control" required placeholder="name@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" class="form-control" required placeholder="Enter password">
+                </div>
+                <button type="submit" class="btn w-100" style="margin-top: 1rem;">Login <i
+                        class="fa-solid fa-arrow-right"></i></button>
+            </form>
+            <p class="text-center auth-footer">
+                Don't have an account? <a href="{% url 'register' %}" class="link-primary">Register here</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

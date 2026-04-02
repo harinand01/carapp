@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="service-catalog-header">
+    <h1 class="text-center">Our Premium Services</h1>
+    <p class="text-center text-muted">Select a service to get started with your booking</p>
+</div>
+
+<div class="services-grid">
+    {% for service in services %}
+    <div class="service-card">
+        {% if service.image %}
+        <div class="service-image" style="background-image: url('{{ service.image.url }}');"></div>
+        {% else %}
+        <div class="service-image-placeholder">
+            <i class="fa-solid fa-wrench"></i>
+        </div>
+        {% endif %}
+
+        <div class="service-card-body">
+            <div class="service-header-row">
+                <h3 class="service-title">{{ service.name }}</h3>
+                <span class="service-price">${{ service.cost }}</span>
+            </div>
+            <p class="service-description">{{ service.description|truncatewords:20 }}</p>
+            <a href="{% url 'book_service' %}?service_id={{ service.id }}" class="btn btn-block">
+                Book Now <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

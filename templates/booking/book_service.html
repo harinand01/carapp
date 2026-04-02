@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card booking-container">
+    <h2 class="text-center"><i class="fa-solid fa-calendar-check"></i> Book a Service</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+            <label>{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+            <small class="text-muted-small">{{ field.help_text }}</small>
+            {% endif %}
+            {% if field.errors %}
+            <div class="error-message">{{ field.errors }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <div class="action-row">
+            <a href="{% url 'customer_dashboard' %}" class="btn btn-secondary flex-1 text-center">Cancel</a>
+            <button type="submit" class="btn flex-1">Confirm Booking <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+    </form>
+</div>
+{% endblock %}

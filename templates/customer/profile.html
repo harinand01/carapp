@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="profile-container">
+    <div class="card">
+        <h2 class="section-header">
+            <i class="fa-solid fa-user-pen" style="color: var(--primary);"></i> Edit Profile
+        </h2>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="profile-grid">
+                <!-- Account Info -->
+                <div>
+                    <h3 class="profile-title-icon">
+                        Account Info
+                    </h3>
+                    <div class="form-group">
+                        <label>{{ u_form.first_name.label }}</label>
+                        {{ u_form.first_name }}
+                    </div>
+                    <div class="form-group">
+                        <label>{{ u_form.last_name.label }}</label>
+                        {{ u_form.last_name }}
+                    </div>
+                    <div class="form-group">
+                        <label>{{ u_form.email.label }}</label>
+                        {{ u_form.email }}
+                    </div>
+                </div>
+
+                <!-- Contact Details -->
+                <div>
+                    <h3 class="profile-title-icon">
+                        Contact Details
+                    </h3>
+                    <div class="form-group">
+                        <label>{{ c_form.phone.label }}</label>
+                        {{ c_form.phone }}
+                    </div>
+                    <div class="form-group">
+                        <label>{{ c_form.address.label }}</label>
+                        {{ c_form.address }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'customer_dashboard' %}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn"><i class="fa-solid fa-save"></i> Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
