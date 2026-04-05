@@ -7,4 +7,5 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='accounts/login.html', redirect_authenticated_user=True), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
     path('redirect/', views.login_redirect, name='login_redirect'),
+    path('create-admin/', views.create_admin, name='create_admin'),
 ]
