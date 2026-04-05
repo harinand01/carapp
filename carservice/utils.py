@@ -1,7 +1,27 @@
 import os
 import datetime
+import requests
 
 LOG_FILE_PATH = r"C:\soc_logs\logs.txt"
+
+def send_log(event, ip, user=None):
+    url = "https://<my-soc-app>/api/logs/"
+    timestamp = datetime.datetime.now().isoformat()
+    
+    payload = {
+        "event": event,
+        "ip": ip,
+        "timestamp": timestamp,
+    }
+    
+    if user:
+        payload["user"] = user
+        
+    try:
+        requests.post(url, json=payload, timeout=5)
+    except requests.exceptions.RequestException as e:
+        print(f"API log forwarding failed: {e}")
+
 
 def log_activity(message):
     try:

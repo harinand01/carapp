@@ -42,16 +42,18 @@ def book_service(request):
                 
                 Payment.objects.create(booking=booking, amount=service.cost, is_successful=False)
                 
-                from carservice.utils import log_activity, get_client_ip
+                from carservice.utils import log_activity, get_client_ip, send_log
                 ip = get_client_ip(request)
                 log_activity(f"Service booked by {request.user.username} (Service: {service.name}) from {ip}")
+                send_log("BOOKING_CREATED", ip, request.user.username)
                 
                 messages.success(request, f"Booking created! Assigned to {booking.mechanic}")
                 return redirect('customer_dashboard')
             else:
-                from carservice.utils import log_activity, get_client_ip
+                from carservice.utils import log_activity, get_client_ip, send_log
                 ip = get_client_ip(request)
                 log_activity(f"Booking failed by {request.user.username} (No mechanics available) from {ip}")
+                send_log("BOOKING_FAILED", ip, request.user.username)
                 messages.error(request, "No mechanics available for this service and time slot.")
     else:
         initial_data = {}
@@ -81,9 +83,10 @@ def payment_status(request, booking_id):
             payment.is_successful = True
             payment.save()
             
-            from carservice.utils import log_activity, get_client_ip
+            from carservice.utils import log_activity, get_client_ip, send_log
             ip = get_client_ip(request)
             log_activity(f"Payment successful by {request.user.username} for booking {booking.id} from {ip}")
+            send_log("PAYMENT_SUCCESSFUL", ip, request.user.username)
             
             messages.success(request, "Payment successful!")
             return redirect('customer_dashboard')
@@ -97,15 +100,17 @@ def cancel_booking(request, booking_id):
     if booking.status == 'PENDING':
         booking.delete()
         
-        from carservice.utils import log_activity, get_client_ip
+        from carservice.utils import log_activity, get_client_ip, send_log
         ip = get_client_ip(request)
         log_activity(f"Booking cancelled by {request.user.username} (Booking ID: {booking_id}) from {ip}")
+        send_log("BOOKING_CANCELLED", ip, request.user.username)
         
         messages.success(request, "Booking cancelled successfully.")
     else:
-        from carservice.utils import log_activity, get_client_ip
+        from carservice.utils import log_activity, get_client_ip, send_log
         ip = get_client_ip(request)
         log_activity(f"Failed to cancel booking by {request.user.username} (Booking ID: {booking_id}, status: {booking.status}) from {ip}")
+        send_log("BOOKING_CANCEL_FAILED", ip, request.user.username)
         
         messages.error(request, "Cannot cancel a booking that is already in progress or completed.")
         
