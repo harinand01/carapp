@@ -49,7 +49,7 @@ class LogMiddleware:
         # Send this data to the mini SOC API
         try:
             print("Sending log:", data)
-            URL = "https://YOUR-SOC-RENDER-URL/api/receive-log/"
+            URL = "https://soc-gnvh.onrender.com/api/receive-log/"
             res = requests.post(URL, json=data, timeout=2)
             print("Response:", res.status_code)
         except Exception as e:
