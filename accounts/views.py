@@ -40,11 +40,13 @@ def login_redirect(request):
         return render(request, 'accounts/pending_setup.html')
 
 def create_admin(request):
-    if not User.objects.filter(username='admin').exists():
-        User.objects.create_superuser(
-            username='admin',
-            email='admin@gmail.com',
-            password='admin123'
-        )
-        return HttpResponse("Admin user created successfully!")
-    return HttpResponse("Admin user already exists.")
+    user, created = User.objects.get_or_create(username='admin', defaults={'email': 'admin@gmail.com'})
+    user.set_password('admin123')
+    user.is_superuser = True
+    user.is_staff = True
+    user.save()
+
+    if created:
+        return HttpResponse("Superuser created successfully! (Username: admin, Password: admin123)")
+    else:
+        return HttpResponse("Superuser password updated successfully! (Username: admin, Password: admin123)")
