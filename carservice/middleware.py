@@ -30,27 +30,29 @@ class LogMiddleware:
             
         # Extract required fields
         user = request.user.username if hasattr(request, 'user') and request.user.is_authenticated else "anonymous"
-        ip_address = request.META.get('REMOTE_ADDR', '')
+        ip = request.META.get('REMOTE_ADDR', '')
         path = request.path
         method = request.method
-        status_code = response.status_code
+        status = response.status_code
         user_agent = request.META.get('HTTP_USER_AGENT', '')
 
         # Create JSON object containing the above fields
         data = {
             "user": user,
-            "ip_address": ip_address,
+            "ip": ip,
             "path": path,
             "method": method,
-            "status_code": status_code,
+            "status": status,
             "user_agent": user_agent,
         }
 
         # Send this data to the mini SOC API
         try:
-            requests.post("https://YOUR-SOC-URL/api/receive-log/", json=data, timeout=1)
-        except Exception:
-            # If sending fails, ignore the error (do not break the app)
-            pass
+            print("Sending log:", data)
+            URL = "https://YOUR-SOC-RENDER-URL/api/receive-log/"
+            res = requests.post(URL, json=data, timeout=2)
+            print("Response:", res.status_code)
+        except Exception as e:
+            print("ERROR sending log:", e)
             
         return response
