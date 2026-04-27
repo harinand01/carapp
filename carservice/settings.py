@@ -54,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'carservice.middleware.ExceptionLoggingMiddleware',
+    'carservice.middleware.LogMiddleware',
 ]
 
 ROOT_URLCONF = 'carservice.urls'
