@@ -16,43 +16,59 @@ class ExceptionLoggingMiddleware:
         # Return None to let Django's default exception handling take over.
         return None
 
+
+
 class LogMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        # Generate the response
-        response = self.get_response(request)
-        
-        # Optimization: do not log requests for static or media files
-        if request.path.startswith('/static') or request.path.startswith('/media'):
-            return response
-            
-        # Extract required fields
-        user = request.user.username if hasattr(request, 'user') and request.user.is_authenticated else "anonymous"
-        ip = request.META.get('REMOTE_ADDR', '')
-        path = request.path
-        method = request.method
-        status = response.status_code
-        user_agent = request.META.get('HTTP_USER_AGENT', '')
+        print("MIDDLEWARE HIT")  # debug
 
-        # Create JSON object containing the above fields
+        response = self.get_response(request)
+
+        # skip unwanted paths
+        if (
+            request.path.startswith('/static') or
+            request.path.startswith('/media') or
+            request.path.startswith('/api') or
+            request.path.startswith('/detection')
+        ):
+            return response
+
+        # user
+        user = request.user.username if hasattr(request, 'user') and request.user.is_authenticated else "anonymous"
+
+        # real IP fix
+        def get_real_ip(request):
+            x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+            if x_forwarded_for:
+                return x_forwarded_for.split(',')[0]
+            return request.META.get('REMOTE_ADDR')
+
+        ip = get_real_ip(request)
+
+        # data
         data = {
             "user": user,
             "ip": ip,
-            "path": path,
-            "method": method,
-            "status": status,
-            "user_agent": user_agent,
+            "path": request.path,
+            "method": request.method,
+            "status": response.status_code,
         }
 
-        # Send this data to the mini SOC API
         try:
             print("Sending log:", data)
-            URL = "https://soc-gnvh.onrender.com/api/receive-log/"
-            res = requests.post(URL, json=data, timeout=2)
+
+            res = requests.post(
+                "https://soc-gnvh.onrender.com/api/receive-log/",
+                json=data,
+                timeout=3
+            )
+
             print("Response:", res.status_code)
+
         except Exception as e:
             print("ERROR sending log:", e)
-            
+
         return response
